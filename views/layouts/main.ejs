@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+    <base href="/">
+    <script src="dmxAppConnect/dmxAppConnect.js"></script>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <!-- New Wappler Page -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="bootstrap/5/css/bootstrap.min.css" />
+    <script src="dmxAppConnect/dmxDatastore/dmxDatastore.js" defer=""></script>
+    <script src="dmxAppConnect/dmxRouting/dmxRouting.js" defer=""></script>
+    <link rel="stylesheet" href="dmxAppConnect/dmxNotifications/dmxNotifications.css" />
+    <script src="dmxAppConnect/dmxNotifications/dmxNotifications.js" defer=""></script>
+    <link rel="stylesheet" href="dmxAppConnect/dmxBootstrap5TableGenerator/dmxBootstrap5TableGenerator.css" />
+</head>
+
+<body is="dmx-app" id="main">
+    <div is="dmx-view" id="content">
+        <%- await include(content, locals); %>
+    </div>
+    <script src="bootstrap/5/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

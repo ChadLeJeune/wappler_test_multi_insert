@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "query",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "db",
+        "sql": {
+          "type": "SELECT",
+          "columns": [
+            {
+              "table": "child_table",
+              "column": "id"
+            },
+            {
+              "table": "child_table",
+              "column": "FKParentID"
+            },
+            {
+              "table": "child_table",
+              "column": "ChildName"
+            },
+            {
+              "table": "child_table",
+              "column": "OtherValue"
+            }
+          ],
+          "table": {
+            "name": "child_table"
+          },
+          "joins": [],
+          "query": "SELECT id, FKParentID, ChildName, OtherValue\nFROM child_table",
+          "params": []
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "FKParentID",
+          "type": "text"
+        },
+        {
+          "name": "ChildName",
+          "type": "text"
+        },
+        {
+          "name": "OtherValue",
+          "type": "text"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "query",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "db",
+        "sql": {
+          "type": "SELECT",
+          "columns": [
+            {
+              "table": "parent_table",
+              "column": "id"
+            },
+            {
+              "table": "parent_table",
+              "column": "ParentName"
+            }
+          ],
+          "table": {
+            "name": "parent_table"
+          },
+          "joins": [],
+          "query": "SELECT id, ParentName\nFROM parent_table",
+          "params": []
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "ParentName",
+          "type": "text"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

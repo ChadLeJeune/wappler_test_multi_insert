@@ -1,0 +1,87 @@
+{
+  "direct": true,
+  "type": "mysql",
+  "connection": {
+    "host": "localhost",
+    "port": 9906,
+    "user": "root",
+    "password": "wK0rt9Ke",
+    "database": "test_multi-insert"
+  },
+  "schema": {
+    "tables": {
+      "child_table": {
+        "db": {
+          "engine": "InnoDB",
+          "schema": "test_multi-insert",
+          "collation": "utf8mb4_general_ci"
+        },
+        "columns": {
+          "id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "ChildName": {
+            "db": {
+              "type": "string",
+              "default": "NULL",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "OtherValue": {
+            "db": {
+              "type": "string",
+              "default": "NULL",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "FKParentID": {
+            "db": {
+              "type": "reference",
+              "default": "NULL",
+              "primary": false,
+              "nullable": true,
+              "references": "id",
+              "inTable": "parent_table",
+              "onUpdate": "CASCADE",
+              "onDelete": "CASCADE"
+            }
+          }
+        }
+      },
+      "parent_table": {
+        "db": {
+          "engine": "InnoDB",
+          "schema": "test_multi-insert",
+          "collation": "utf8mb4_general_ci"
+        },
+        "columns": {
+          "id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "ParentName": {
+            "db": {
+              "type": "string",
+              "default": "NULL",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          }
+        }
+      }
+    },
+    "views": {}
+  }
+}

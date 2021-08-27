@@ -1,0 +1,93 @@
+<dmx-notifications id="notifies1"></dmx-notifications>
+<dmx-serverconnect id="sc_parent_records" url="api/list_parents"></dmx-serverconnect>
+<dmx-serverconnect id="sc_children_records" url="api/list_children"></dmx-serverconnect>
+<dmx-serverconnect id="sc_delete_parent" url="api/delete_parent" noload dmx-on:success="notifies1.success('Parent successfully deleted!');sc_parent_records.load();sc_children_records.load()" dmx-on:error="notifies1.danger('Error while deleting parent record:'+sc_delete_parent.lastError.message)"></dmx-serverconnect>
+<dmx-datastore id="child_info"></dmx-datastore>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form id="form_parent_children_insert" method="post" is="dmx-serverconnect-form" action="api/insert_parent_children" dmx-on:success="notifies1.success('Successfully entered parent and children records!');sc_parent_records.load();sc_children_records.load()" dmx-on:error="notifies1.danger('Error entering parent and children records!')">
+
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="input_parent_name" name="input_parent_name" aria-describedby="input1_help" placeholder="Parent Name">
+                </div>
+
+                <p>Add Child Items:</p>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="input_child_name" name="input_child_name" aria-describedby="input1_help" placeholder="Child Name">
+                </div>
+                <div class="mb-3">
+                    <textarea id="input_other_value" class="form-control" name="input_other_value" placeholder="Other Value"></textarea>
+                </div><button id="btn_add_child_record" class="btn btn-primary" dmx-on:click="child_info.insert({ChildName: form_parent_children_insert.input_child_name.value, OtherValue: form_parent_children_insert.input_other_value.value})">Add Child Record</button>
+                <button id="btn_clear_child_records" class="btn btn-secondary" dmx-on:click="child_info.clear()">Clear Child Records</button>
+                <p class="mt-4">Added Child Records:</p>
+                <div id="child_record" is="dmx-repeat" dmx-bind:repeat="child_info.data">
+
+                    <input id="child_name_value" name="child_record[{{$index}}][ChildName]" type="text" class="form-control" dmx-bind:value="ChildName" dmx-on:changed="child_info.update({$id: $id},{ChildName: child_name_value.value})">
+                    <textarea id="child_other_value" class="form-control" name="child_record[{{$index}}][OtherValue]" dmx-bind:value="OtherValue" dmx-on:changed="child_info.update({$id: form_parent_children_insert.child_record[0].$id},{OtherValue: child_other_value.value})"></textarea>
+                    <button id="btn_delete_child" class="btn btn-secondary mt-1 mb-3" dmx-text="'Delete '+child_name_value.value" dmx-on:click="child_info.delete({$id: $id})">Button</button>
+                </div>
+                <button id="btn1_sumbit" class="btn btn-primary" type="submit">Submit Form</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="mt-4 col-md-auto">
+            <h1>Parent Records</h1>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Parent name</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="sc_parent_records.data.query" id="tableRepeat_parent">
+                        <tr>
+                            <td dmx-text="id"></td>
+                            <td dmx-text="ParentName"></td>
+                            <td class="text-md-center h-auto">
+                                <button id="btn_delete_parent" class="btn btn-danger align-self-md-center pt-md-0 pb-md-1 ps-md-2 pe-md-2 w-100 h-100" dmx-on:click="sc_delete_parent.load({id: id})"><i class="fas fa-trash fa-xs"></i></button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mt-4">
+            <h1>Children Records</h1>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Fkparent</th>
+                            <th>Child name</th>
+                            <th>Other value</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="sc_children_records.data.query" id="tableRepeat_children">
+                        <tr>
+                            <td dmx-text="id"></td>
+                            <td dmx-text="FKParentID"></td>
+                            <td dmx-text="ChildName"></td>
+                            <td dmx-text="OtherValue"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div><!-- Wappler include head-page="layouts/main" fontawesome_5="cdn" bootstrap5="local" is="dmx-app" id="index" appConnect="local" components="{dmxDatastore:{},dmxNotifications:{},dmxBootstrap5TableGenerator:{}}" -->
+
+
+
+
+
+
+
+<meta name="ac:route" content="/">
+<!-- New Wappler Page -->

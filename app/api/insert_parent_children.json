@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "options": {
+      "linkedFile": "/views/index.ejs",
+      "linkedForm": "form_parent_children_insert"
+    },
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "input_parent_name",
+        "name": "input_parent_name"
+      },
+      {
+        "type": "object",
+        "name": "child_record",
+        "sub": [
+          {
+            "type": "array",
+            "fieldName": "record[{{$index}}][ChildName]",
+            "name": "ChildName"
+          },
+          {
+            "type": "array",
+            "fieldName": "record[{{$index}}][OtherValue]",
+            "name": "OtherValue"
+          }
+        ]
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "insert_parent",
+        "module": "dbupdater",
+        "action": "insert",
+        "options": {
+          "connection": "db",
+          "sql": {
+            "type": "insert",
+            "values": [
+              {
+                "table": "parent_table",
+                "column": "ParentName",
+                "type": "text",
+                "value": "{{$_POST.input_parent_name}}"
+              }
+            ],
+            "table": "parent_table",
+            "returning": "id",
+            "query": "INSERT INTO parent_table\n(ParentName) VALUES (:P1 /* {{$_POST.input_parent_name}} */)",
+            "params": [
+              {
+                "name": ":P1",
+                "type": "expression",
+                "value": "{{$_POST.input_parent_name}}"
+              }
+            ]
+          }
+        },
+        "meta": [
+          {
+            "name": "identity",
+            "type": "text"
+          },
+          {
+            "name": "affected",
+            "type": "number"
+          }
+        ],
+        "output": true
+      },
+      {
+        "name": "output_post",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": "{{$_POST}}"
+        },
+        "output": true,
+        "disabled": true
+      },
+      {
+        "name": "child_repeat",
+        "module": "core",
+        "action": "repeat",
+        "options": {
+          "repeat": "{{$_POST.child_record}}",
+          "outputFields": [],
+          "exec": {
+            "steps": {
+              "name": "repeat_ChildName",
+              "module": "core",
+              "action": "repeat",
+              "options": {
+                "repeat": "{{ChildName}}",
+                "outputFields": [],
+                "exec": {
+                  "steps": [
+                    {
+                      "name": "insert_children",
+                      "module": "dbupdater",
+                      "action": "insert",
+                      "options": {
+                        "connection": "db",
+                        "sql": {
+                          "type": "insert",
+                          "values": [
+                            {
+                              "table": "child_table",
+                              "column": "ChildName",
+                              "type": "text",
+                              "value": "{{$value}}"
+                            },
+                            {
+                              "table": "child_table",
+                              "column": "OtherValue",
+                              "type": "text",
+                              "value": "{{OtherValue[$index]}}"
+                            },
+                            {
+                              "table": "child_table",
+                              "column": "FKParentID",
+                              "type": "text",
+                              "value": "{{insert_parent.identity}}"
+                            }
+                          ],
+                          "table": "child_table",
+                          "returning": "id",
+                          "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
+                          "params": [
+                            {
+                              "name": ":P1",
+                              "type": "expression",
+                              "value": "{{$value}}"
+                            },
+                            {
+                              "name": ":P2",
+                              "type": "expression",
+                              "value": "{{OtherValue[$index]}}"
+                            },
+                            {
+                              "name": ":P3",
+                              "type": "expression",
+                              "value": "{{insert_parent.identity}}"
+                            }
+                          ]
+                        }
+                      },
+                      "meta": [
+                        {
+                          "name": "identity",
+                          "type": "text"
+                        },
+                        {
+                          "name": "affected",
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "output_ChildName",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "value": "{{$value}}"
+                      },
+                      "output": true,
+                      "disabled": true
+                    },
+                    {
+                      "name": "output_OtherValue",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "value": "{{OtherValue[$index]}}"
+                      },
+                      "output": true,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "meta": [
+                {
+                  "name": "$index",
+                  "type": "number"
+                },
+                {
+                  "name": "$number",
+                  "type": "number"
+                },
+                {
+                  "name": "$name",
+                  "type": "text"
+                },
+                {
+                  "name": "$value",
+                  "type": "object"
+                },
+                {
+                  "name": "output_ChildName",
+                  "type": "text"
+                },
+                {
+                  "name": "output_OtherValue",
+                  "type": "text"
+                }
+              ],
+              "outputType": "array"
+            }
+          }
+        },
+        "meta": [
+          {
+            "name": "$index",
+            "type": "number"
+          },
+          {
+            "name": "$number",
+            "type": "number"
+          },
+          {
+            "name": "$name",
+            "type": "text"
+          },
+          {
+            "name": "$value",
+            "type": "object"
+          },
+          {
+            "name": "ChildName",
+            "type": "array"
+          },
+          {
+            "name": "OtherValue",
+            "type": "array"
+          }
+        ],
+        "outputType": "array",
+        "output": true
+      },
+      {
+        "name": "child_record_count",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": "{{$_POST.child_record.ChildName.count()}}"
+        },
+        "output": true,
+        "outputType": "number",
+        "disabled": true
+      },
+      {
+        "name": "child_iter",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": 0
+        },
+        "outputType": "number",
+        "output": true,
+        "disabled": true
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "while",
+        "options": {
+          "while": "{{child_iter < child_record_count}}",
+          "exec": {
+            "steps": [
+              {
+                "name": "insert_child_records",
+                "module": "dbupdater",
+                "action": "insert",
+                "options": {
+                  "connection": "db",
+                  "sql": {
+                    "type": "insert",
+                    "values": [
+                      {
+                        "table": "child_table",
+                        "column": "ChildName",
+                        "type": "text",
+                        "value": "{{$_POST.child_record.ChildName[child_iter]}}"
+                      },
+                      {
+                        "table": "child_table",
+                        "column": "OtherValue",
+                        "type": "text",
+                        "value": "{{$_POST.child_record.OtherValue[child_iter]}}"
+                      },
+                      {
+                        "table": "child_table",
+                        "column": "FKParentID",
+                        "type": "text",
+                        "value": "{{insert_parent.identity}}"
+                      }
+                    ],
+                    "table": "child_table",
+                    "returning": "id",
+                    "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$_POST.child_record.ChildName[child_iter]}} */, :P2 /* {{$_POST.child_record.OtherValue[child_iter]}} */, :P3 /* {{insert_parent.identity}} */)",
+                    "params": [
+                      {
+                        "name": ":P1",
+                        "type": "expression",
+                        "value": "{{$_POST.child_record.ChildName[child_iter]}}"
+                      },
+                      {
+                        "name": ":P2",
+                        "type": "expression",
+                        "value": "{{$_POST.child_record.OtherValue[child_iter]}}"
+                      },
+                      {
+                        "name": ":P3",
+                        "type": "expression",
+                        "value": "{{insert_parent.identity}}"
+                      }
+                    ]
+                  }
+                },
+                "meta": [
+                  {
+                    "name": "identity",
+                    "type": "text"
+                  },
+                  {
+                    "name": "affected",
+                    "type": "number"
+                  }
+                ]
+              },
+              {
+                "name": "child_iter",
+                "module": "core",
+                "action": "setvalue",
+                "options": {
+                  "value": "{{child_iter }}1"
+                },
+                "outputType": "number",
+                "output": true
+              }
+            ]
+          }
+        },
+        "disabled": true
+      }
+    ]
+  }
+}

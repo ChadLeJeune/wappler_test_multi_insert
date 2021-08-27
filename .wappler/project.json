@@ -1,0 +1,47 @@
+{
+  "projectName": "Test Multi-insert",
+  "styleFile": "/css/style.css",
+  "assetsFolder": "/assets",
+  "designFramework": "bootstrap5",
+  "frameworks": [
+    {
+      "name": "fontawesome_5",
+      "type": "cdn"
+    },
+    {
+      "name": "bootstrap5",
+      "type": "local"
+    },
+    {
+      "name": "appConnect",
+      "type": "local"
+    }
+  ],
+  "hostingType": "docker",
+  "projectServerModel": "node",
+  "webRootFolder": "/public",
+  "useRouting": true,
+  "addBase": true,
+  "routingHandler": "node",
+  "targets": [
+    {
+      "name": "Development",
+      "remoteURL": "http://localhost:8100",
+      "webServerPort": 8100,
+      "webServerLang": "node",
+      "targetType": "docker",
+      "webServer": "node",
+      "NodeVersion": "12",
+      "databaseType": "mariadb",
+      "databasePort": 9906,
+      "mariaDBVersion": "10.5.x",
+      "mariaDB_rootPassword": "wK0rt9Ke",
+      "mariaDB_databaseName": "test_multi-insert",
+      "mariaDB_username": "db_user",
+      "mariaDB_password": "UcfVTXN0",
+      "dockerTimezone": "Etc/UTC"
+    }
+  ],
+  "activeTarget": "Development",
+  "projectType": "web"
+}

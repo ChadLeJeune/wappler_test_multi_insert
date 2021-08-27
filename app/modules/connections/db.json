@@ -1,0 +1,19 @@
+{
+  "name": "db",
+  "module": "dbconnector",
+  "action": "connect",
+  "options": {
+    "client": "mysql",
+    "connection": {
+      "host": "db",
+      "port": 3306,
+      "user": "db_user",
+      "password": "UcfVTXN0",
+      "database": "test_multi-insert"
+    },
+    "meta": {}
+  },
+  "actionFilePath": "file:///Users/chadlejeune/Documents/Wappler/test_multi_insert/app/modules/connections/db.json",
+  "serverType": "node",
+  "fileName": "db.json"
+}
