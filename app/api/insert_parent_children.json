@@ -77,8 +77,7 @@
         "options": {
           "value": "{{$_POST}}"
         },
-        "output": true,
-        "disabled": true
+        "output": true
       },
       {
         "name": "child_repeat",
@@ -96,89 +95,67 @@
                 "repeat": "{{ChildName}}",
                 "outputFields": [],
                 "exec": {
-                  "steps": [
-                    {
-                      "name": "insert_children",
-                      "module": "dbupdater",
-                      "action": "insert",
-                      "options": {
-                        "connection": "db",
-                        "sql": {
-                          "type": "insert",
-                          "values": [
-                            {
-                              "table": "child_table",
-                              "column": "ChildName",
-                              "type": "text",
-                              "value": "{{$value}}"
-                            },
-                            {
-                              "table": "child_table",
-                              "column": "OtherValue",
-                              "type": "text",
-                              "value": "{{OtherValue[$index]}}"
-                            },
-                            {
-                              "table": "child_table",
-                              "column": "FKParentID",
-                              "type": "text",
-                              "value": "{{insert_parent.identity}}"
-                            }
-                          ],
-                          "table": "child_table",
-                          "returning": "id",
-                          "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
-                          "params": [
-                            {
-                              "name": ":P1",
-                              "type": "expression",
-                              "value": "{{$value}}"
-                            },
-                            {
-                              "name": ":P2",
-                              "type": "expression",
-                              "value": "{{OtherValue[$index]}}"
-                            },
-                            {
-                              "name": ":P3",
-                              "type": "expression",
-                              "value": "{{insert_parent.identity}}"
-                            }
-                          ]
-                        }
-                      },
-                      "meta": [
-                        {
-                          "name": "identity",
-                          "type": "text"
-                        },
-                        {
-                          "name": "affected",
-                          "type": "number"
-                        }
-                      ]
+                  "steps": {
+                    "name": "insert_children",
+                    "module": "dbupdater",
+                    "action": "insert",
+                    "options": {
+                      "connection": "db",
+                      "sql": {
+                        "type": "insert",
+                        "values": [
+                          {
+                            "table": "child_table",
+                            "column": "ChildName",
+                            "type": "text",
+                            "value": "{{$value}}"
+                          },
+                          {
+                            "table": "child_table",
+                            "column": "OtherValue",
+                            "type": "text",
+                            "value": "{{OtherValue[$index]}}"
+                          },
+                          {
+                            "table": "child_table",
+                            "column": "FKParentID",
+                            "type": "text",
+                            "value": "{{insert_parent.identity}}"
+                          }
+                        ],
+                        "table": "child_table",
+                        "returning": "id",
+                        "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
+                        "params": [
+                          {
+                            "name": ":P1",
+                            "type": "expression",
+                            "value": "{{$value}}"
+                          },
+                          {
+                            "name": ":P2",
+                            "type": "expression",
+                            "value": "{{OtherValue[$index]}}"
+                          },
+                          {
+                            "name": ":P3",
+                            "type": "expression",
+                            "value": "{{insert_parent.identity}}"
+                          }
+                        ]
+                      }
                     },
-                    {
-                      "name": "output_ChildName",
-                      "module": "core",
-                      "action": "setvalue",
-                      "options": {
-                        "value": "{{$value}}"
+                    "meta": [
+                      {
+                        "name": "identity",
+                        "type": "text"
                       },
-                      "output": true,
-                      "disabled": true
-                    },
-                    {
-                      "name": "output_OtherValue",
-                      "module": "core",
-                      "action": "setvalue",
-                      "options": {
-                        "value": "{{OtherValue[$index]}}"
-                      },
-                      "output": true,
-                      "disabled": true
-                    }
-                  ]
+                      {
+                        "name": "affected",
+                        "type": "number"
+                      }
+                    ]
+                  }
                 }
               },
               "meta": [
@@ -239,112 +216,6 @@
         ],
         "outputType": "array",
         "output": true
-      },
-      {
-        "name": "child_record_count",
-        "module": "core",
-        "action": "setvalue",
-        "options": {
-          "value": "{{$_POST.child_record.ChildName.count()}}"
-        },
-        "output": true,
-        "outputType": "number",
-        "disabled": true
-      },
-      {
-        "name": "child_iter",
-        "module": "core",
-        "action": "setvalue",
-        "options": {
-          "value": 0
-        },
-        "outputType": "number",
-        "output": true,
-        "disabled": true
-      },
-      {
-        "name": "",
-        "module": "core",
-        "action": "while",
-        "options": {
-          "while": "{{child_iter < child_record_count}}",
-          "exec": {
-            "steps": [
-              {
-                "name": "insert_child_records",
-                "module": "dbupdater",
-                "action": "insert",
-                "options": {
-                  "connection": "db",
-                  "sql": {
-                    "type": "insert",
-                    "values": [
-                      {
-                        "table": "child_table",
-                        "column": "ChildName",
-                        "type": "text",
-                        "value": "{{$_POST.child_record.ChildName[child_iter]}}"
-                      },
-                      {
-                        "table": "child_table",
-                        "column": "OtherValue",
-                        "type": "text",
-                        "value": "{{$_POST.child_record.OtherValue[child_iter]}}"
-                      },
-                      {
-                        "table": "child_table",
-                        "column": "FKParentID",
-                        "type": "text",
-                        "value": "{{insert_parent.identity}}"
-                      }
-                    ],
-                    "table": "child_table",
-                    "returning": "id",
-                    "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$_POST.child_record.ChildName[child_iter]}} */, :P2 /* {{$_POST.child_record.OtherValue[child_iter]}} */, :P3 /* {{insert_parent.identity}} */)",
-                    "params": [
-                      {
-                        "name": ":P1",
-                        "type": "expression",
-                        "value": "{{$_POST.child_record.ChildName[child_iter]}}"
-                      },
-                      {
-                        "name": ":P2",
-                        "type": "expression",
-                        "value": "{{$_POST.child_record.OtherValue[child_iter]}}"
-                      },
-                      {
-                        "name": ":P3",
-                        "type": "expression",
-                        "value": "{{insert_parent.identity}}"
-                      }
-                    ]
-                  }
-                },
-                "meta": [
-                  {
-                    "name": "identity",
-                    "type": "text"
-                  },
-                  {
-                    "name": "affected",
-                    "type": "number"
-                  }
-                ]
-              },
-              {
-                "name": "child_iter",
-                "module": "core",
-                "action": "setvalue",
-                "options": {
-                  "value": "{{child_iter }}1"
-                },
-                "outputType": "number",
-                "output": true
-              }
-            ]
-          }
-        },
-        "disabled": true
       }
     ]
   }
