@@ -23,8 +23,8 @@
                 <p class="mt-4">Added Child Records:</p>
                 <div id="child_record" is="dmx-repeat" dmx-bind:repeat="child_info.data">
 
-                    <input id="child_name_value" name="child_record[ChildName]" type="text" class="form-control" dmx-bind:value="ChildName" dmx-on:changed="child_info.update({$id: $id},{ChildName: child_name_value.value})">
-                    <textarea id="child_other_value" class="form-control" name="child_record[OtherValue]" dmx-bind:value="OtherValue" dmx-on:changed="child_info.update({$id: form_parent_children_insert.child_record[0].$id},{OtherValue: child_other_value.value})"></textarea>
+                    <input id="imp_child_name_value" dmx-bind:id="imp_child_name_value_{{$index}}" dmx-bind:name="child_record[{{$index}}][ChildName]" name="ChildName" type="text" class="form-control" dmx-bind:value="ChildName" dmx-on:changed="child_info.update({$id: $id},{ChildName: child_name_value.value})">
+                    <textarea id="child_other_value" class="form-control" dmx-bind:id="imp_child_other_value_{{$index}}" dmx-bind:name="child_record[{{$index}}][OtherValue]" name="child_record[OtherValue]" dmx-bind:value="OtherValue" dmx-on:changed="child_info.update({$id: form_parent_children_insert.child_record[0].$id},{OtherValue: child_other_value.value})"></textarea>
                     <button id="btn_delete_child" class="btn btn-secondary mt-1 mb-3" dmx-text="'Delete '+child_name_value.value" dmx-on:click="child_info.delete({$id: $id})">Button</button>
                 </div>
                 <button id="btn1_sumbit" class="btn btn-primary" type="submit">Submit Form</button>

@@ -11,17 +11,17 @@
         "name": "input_parent_name"
       },
       {
-        "type": "object",
+        "type": "array",
         "name": "child_record",
         "sub": [
           {
             "type": "text",
-            "fieldName": "child_record[ChildName]",
+            "fieldName": "child_record[{{$index}}][ChildName]",
             "name": "ChildName"
           },
           {
             "type": "text",
-            "fieldName": "child_record[OtherValue]",
+            "fieldName": "child_record[{{$index}}][OtherValue]",
             "name": "OtherValue"
           }
         ]
@@ -71,24 +71,18 @@
         "output": true
       },
       {
-        "name": "output_post",
-        "module": "core",
-        "action": "setvalue",
-        "options": {
-          "value": "{{$_POST}}"
-        },
-        "output": true
-      },
-      {
-        "name": "repeat_ChildName",
+        "name": "record_repeat",
         "module": "core",
         "action": "repeat",
         "options": {
-          "repeat": "{{$_POST.child_record.ChildName}}",
-          "outputFields": [],
+          "repeat": "{{$_POST.child_record}}",
+          "outputFields": [
+            "ChildName",
+            "OtherValue"
+          ],
           "exec": {
             "steps": {
-              "name": "insert_children",
+              "name": "record_insert",
               "module": "dbupdater",
               "action": "insert",
               "options": {
@@ -100,13 +94,13 @@
                       "table": "child_table",
                       "column": "ChildName",
                       "type": "text",
-                      "value": "{{$value}}"
+                      "value": "{{ChildName}}"
                     },
                     {
                       "table": "child_table",
                       "column": "OtherValue",
                       "type": "text",
-                      "value": "{{$_POST.child_record.OtherValue[$index]}}"
+                      "value": "{{OtherValue}}"
                     },
                     {
                       "table": "child_table",
@@ -117,17 +111,17 @@
                   ],
                   "table": "child_table",
                   "returning": "id",
-                  "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{$_POST.child_record.OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
+                  "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{ChildName}} */, :P2 /* {{OtherValue}} */, :P3 /* {{insert_parent.identity}} */)",
                   "params": [
                     {
                       "name": ":P1",
                       "type": "expression",
-                      "value": "{{$value}}"
+                      "value": "{{ChildName}}"
                     },
                     {
                       "name": ":P2",
                       "type": "expression",
-                      "value": "{{$_POST.child_record.OtherValue[$index]}}"
+                      "value": "{{OtherValue}}"
                     },
                     {
                       "name": ":P3",
@@ -168,11 +162,11 @@
             "type": "object"
           },
           {
-            "name": "output_ChildName",
+            "name": "ChildName",
             "type": "text"
           },
           {
-            "name": "output_OtherValue",
+            "name": "OtherValue",
             "type": "text"
           }
         ],
