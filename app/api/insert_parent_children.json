@@ -15,13 +15,13 @@
         "name": "child_record",
         "sub": [
           {
-            "type": "array",
-            "fieldName": "record[{{$index}}][ChildName]",
+            "type": "text",
+            "fieldName": "child_record[ChildName]",
             "name": "ChildName"
           },
           {
-            "type": "array",
-            "fieldName": "record[{{$index}}][OtherValue]",
+            "type": "text",
+            "fieldName": "child_record[OtherValue]",
             "name": "OtherValue"
           }
         ]
@@ -80,111 +80,73 @@
         "output": true
       },
       {
-        "name": "child_repeat",
+        "name": "repeat_ChildName",
         "module": "core",
         "action": "repeat",
         "options": {
-          "repeat": "{{$_POST.child_record}}",
+          "repeat": "{{$_POST.child_record.ChildName}}",
           "outputFields": [],
           "exec": {
             "steps": {
-              "name": "repeat_ChildName",
-              "module": "core",
-              "action": "repeat",
+              "name": "insert_children",
+              "module": "dbupdater",
+              "action": "insert",
               "options": {
-                "repeat": "{{ChildName}}",
-                "outputFields": [],
-                "exec": {
-                  "steps": {
-                    "name": "insert_children",
-                    "module": "dbupdater",
-                    "action": "insert",
-                    "options": {
-                      "connection": "db",
-                      "sql": {
-                        "type": "insert",
-                        "values": [
-                          {
-                            "table": "child_table",
-                            "column": "ChildName",
-                            "type": "text",
-                            "value": "{{$value}}"
-                          },
-                          {
-                            "table": "child_table",
-                            "column": "OtherValue",
-                            "type": "text",
-                            "value": "{{OtherValue[$index]}}"
-                          },
-                          {
-                            "table": "child_table",
-                            "column": "FKParentID",
-                            "type": "text",
-                            "value": "{{insert_parent.identity}}"
-                          }
-                        ],
-                        "table": "child_table",
-                        "returning": "id",
-                        "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
-                        "params": [
-                          {
-                            "name": ":P1",
-                            "type": "expression",
-                            "value": "{{$value}}"
-                          },
-                          {
-                            "name": ":P2",
-                            "type": "expression",
-                            "value": "{{OtherValue[$index]}}"
-                          },
-                          {
-                            "name": ":P3",
-                            "type": "expression",
-                            "value": "{{insert_parent.identity}}"
-                          }
-                        ]
-                      }
+                "connection": "db",
+                "sql": {
+                  "type": "insert",
+                  "values": [
+                    {
+                      "table": "child_table",
+                      "column": "ChildName",
+                      "type": "text",
+                      "value": "{{$value}}"
                     },
-                    "meta": [
-                      {
-                        "name": "identity",
-                        "type": "text"
-                      },
-                      {
-                        "name": "affected",
-                        "type": "number"
-                      }
-                    ]
-                  }
+                    {
+                      "table": "child_table",
+                      "column": "OtherValue",
+                      "type": "text",
+                      "value": "{{$_POST.child_record.OtherValue[$index]}}"
+                    },
+                    {
+                      "table": "child_table",
+                      "column": "FKParentID",
+                      "type": "text",
+                      "value": "{{insert_parent.identity}}"
+                    }
+                  ],
+                  "table": "child_table",
+                  "returning": "id",
+                  "query": "INSERT INTO child_table\n(ChildName, OtherValue, FKParentID) VALUES (:P1 /* {{$value}} */, :P2 /* {{$_POST.child_record.OtherValue[$index]}} */, :P3 /* {{insert_parent.identity}} */)",
+                  "params": [
+                    {
+                      "name": ":P1",
+                      "type": "expression",
+                      "value": "{{$value}}"
+                    },
+                    {
+                      "name": ":P2",
+                      "type": "expression",
+                      "value": "{{$_POST.child_record.OtherValue[$index]}}"
+                    },
+                    {
+                      "name": ":P3",
+                      "type": "expression",
+                      "value": "{{insert_parent.identity}}"
+                    }
+                  ]
                 }
               },
               "meta": [
                 {
-                  "name": "$index",
+                  "name": "identity",
+                  "type": "text"
+                },
+                {
+                  "name": "affected",
                   "type": "number"
-                },
-                {
-                  "name": "$number",
-                  "type": "number"
-                },
-                {
-                  "name": "$name",
-                  "type": "text"
-                },
-                {
-                  "name": "$value",
-                  "type": "object"
-                },
-                {
-                  "name": "output_ChildName",
-                  "type": "text"
-                },
-                {
-                  "name": "output_OtherValue",
-                  "type": "text"
                 }
-              ],
-              "outputType": "array"
+              ]
             }
           }
         },
@@ -206,16 +168,15 @@
             "type": "object"
           },
           {
-            "name": "ChildName",
-            "type": "array"
+            "name": "output_ChildName",
+            "type": "text"
           },
           {
-            "name": "OtherValue",
-            "type": "array"
+            "name": "output_OtherValue",
+            "type": "text"
           }
         ],
-        "outputType": "array",
-        "output": true
+        "outputType": "array"
       }
     ]
   }
